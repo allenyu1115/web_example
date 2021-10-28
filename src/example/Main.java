@@ -34,6 +34,7 @@ public class Main {
 		return () -> holder.setI(decrease(holder.getI()));
 	}
 
+	//test
 	public static void main(String[] args) {
              Holder holder = new Holder(1);
              System.out.println(holder.getI());
