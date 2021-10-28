@@ -28,6 +28,7 @@ public class Main {
 		return i - 1;
 	}
 
+	//increase action return decrease action
 	public static Runnable increase(Holder holder) {
 		holder.setI(increase(holder.getI()));
 		return () -> holder.setI(decrease(holder.getI()));
@@ -39,6 +40,7 @@ public class Main {
              
              List<Runnable> decreaseList = new ArrayList<>();
              
+             //increase four times
              decreaseList.add(increase(holder));
              decreaseList.add(increase(holder));
              decreaseList.add(increase(holder));
@@ -46,11 +48,14 @@ public class Main {
              
              System.out.println(holder.getI());
              
+             //pop last increase action
              Runnable lastOne = decreaseList.remove(decreaseList.size() -1);
              lastOne.run();
              
+             //check the result
              System.out.println(holder.getI());
              
+             //revoke twice again
              Runnable secondOne = decreaseList.remove(decreaseList.size() -1);
              Runnable thirdOne = decreaseList.remove(decreaseList.size() -1);
              
