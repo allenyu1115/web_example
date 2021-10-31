@@ -64,7 +64,7 @@ public class Main {
              thirdOne.run();
              
              System.out.println(holder.getI());
-             
+            
              
 	}
 }
