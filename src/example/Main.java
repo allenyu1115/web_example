@@ -2,49 +2,60 @@ package example;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 public class Main {
 
 	public static enum CharType {
-		operator, number, undefine
+		operator, number, undefine, blank, end
 	}
 
-	public static String getSExpression(String str, CharType lastCharType, String currentNum, Stack<String> numberStack,
-			Stack<String> operatorStack) {
-		if (str.isEmpty()) {
-			if (!operatorStack.isEmpty() && !numberStack.isEmpty()) {
-				return combineToSExpression(operatorStack.pop(), numberStack.pop(), currentNum);
-			} else {
-				return "";
-			}
+	public static String getSExpression(String str) {
+		if (str.length() == 0) {
+			return str;
 		} else {
-			String currentChar = str.substring(0, 1);
-			CharType currentCharType = CharType.undefine;
-			if (Character.isDigit(currentChar.charAt(0))) {
-				currentCharType = CharType.number;
-			} else if (currentChar.equals("+") || currentChar.equals("-") || currentChar.equals("*")
-					|| currentChar.equals("/")) {
-				currentCharType = CharType.operator;
-			}
-			if (currentCharType.equals(CharType.number)) {
-				return getSExpression(str.substring(1, str.length()), currentCharType, currentNum + currentChar,
-						numberStack, operatorStack);
-			} else if (currentCharType.equals(CharType.operator)) {
-				if (!operatorStack.isEmpty() && !numberStack.isEmpty()) {
-					numberStack.push(combineToSExpression(operatorStack.pop(), numberStack.pop(), currentNum));
-				} else {
-					numberStack.push(currentNum);
-				}
-				operatorStack.push(currentChar);
-				return getSExpression(str.substring(1, str.length()), currentCharType, "", numberStack, operatorStack);
-			} else {
-				return getSExpression(str.substring(1, str.length()), lastCharType, currentNum, numberStack,
-						operatorStack);
-			}
-
+			return getSExpressionRecursive(str, CharType.undefine, "", "", "");
 		}
 
+	}
+
+	private static String getSExpressionRecursive(String str, CharType lastCharType, String currentNum,
+			String lastNumberStr, String lastOperator) {
+		String currentChar = str.isEmpty() ? "" : str.substring(0, 1);
+		CharType currentCharType = getCharType(currentChar);
+		if (currentCharType.equals(CharType.number)) {
+			return getSExpressionRecursive(str.substring(1, str.length()), currentCharType, currentNum + currentChar,
+					lastNumberStr, lastOperator);
+		} else if (currentCharType.equals(CharType.operator)) {
+			return getSExpressionRecursive(str.substring(1, str.length()), currentCharType, "",
+					(lastOperator != "" && lastNumberStr != "")
+							? combineToSExpression(lastOperator, lastNumberStr, currentNum)
+							: currentNum,
+					currentChar);
+		} else if (currentCharType.equals(CharType.blank)) {
+			return getSExpressionRecursive(str.substring(1, str.length()), lastCharType, currentNum, lastNumberStr,
+					lastOperator);
+		} else if (currentCharType.equals(CharType.end)) {
+			return (lastNumberStr != "" && lastOperator != "")
+					? combineToSExpression(lastOperator, lastNumberStr, currentNum)
+					: "";
+		}
+		return "";
+
+	}
+
+	private static CharType getCharType(String currentChar) {
+		CharType currentCharType = CharType.undefine;
+		if (currentChar.equals(" ")) {
+			currentCharType = CharType.blank;
+		} else if (currentChar == null || currentChar.equals(""))
+			currentCharType = CharType.end;
+		else if (currentChar.chars().allMatch(Character::isDigit)) {
+			currentCharType = CharType.number;
+		} else if (currentChar.equals("+") || currentChar.equals("-") || currentChar.equals("*")
+				|| currentChar.equals("/")) {
+			currentCharType = CharType.operator;
+		}
+		return currentCharType;
 	}
 
 	private static String combineToSExpression(String operator, String leftNum, String rightNum) {
@@ -110,10 +121,7 @@ public class Main {
 		secondOne.run();
 		thirdOne.run();
 
-		Stack<String> xx = new Stack<>();
-		Stack<String> yy = new Stack<>();
 		System.out.println(holder.getI());
-		System.out.println(getSExpression("71 + 8 * 76 - 899 / 5", CharType.undefine, "", xx, yy));
-
+		System.out.println(getSExpression("71 + 8 * 76 - 899 / 5"));
 	}
 }
