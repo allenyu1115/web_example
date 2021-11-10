@@ -1,0 +1,7 @@
+#selectGrp, #emailBind {
+	display: inline
+}
+
+#phoneBind {
+	display: none
+}
