@@ -1,10 +1,16 @@
 $().ready(function() {
-	$('#show-more-content').hide();
-	$('#show-less').hide(); $('#show-more').click(function() {
-		$('#show-more').hide(); $('#mydefault').hide(); $('#show-less').show();
-		$('#show-more-content').show();
-	}); $('#show-less').click(function() {
-		$('#show-more').show(); $('#mydefault').show(); $('#show-less').hide();
-		$('#show-more-content').hide();
-	});
+	(function() {
+		var show_added = true
+		let init_line = 'Here is show more'
+		let added_line = '<br>add new content'
+		$('#show').click(function() {
+			$('#mydefault').html(show_added ? init_line : init_line + added_line)
+			$('#show').html(show_added ? 'view all' : 'show less')
+			$('#mydefault').css(show_added ? { 'height': '1.5em', 'overflow': 'hidden' } : {
+				'height': '3em', 'overflow': 'auto'
+			});
+			show_added = !show_added
+		})
+		$("#show").trigger("click");
+	})()
 })
